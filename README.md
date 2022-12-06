@@ -1,2 +1,5 @@
 # CRUD-PYTHON-SQL
-Sistema CRUD creado con Python, Tkinter y SQLite3
+Sistema sencillo CRUD creado con Python, Tkinter y SQLite3
+
+
+para abrirlo se tiene que ejecutar el archivo que dice "conexion.pyw"
