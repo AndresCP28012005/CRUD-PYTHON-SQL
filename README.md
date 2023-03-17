@@ -1,4 +1,4 @@
-# CRUD-PYTHON-SQL
+# Sistema CRUD con interfaz amigable en Python y SQLite3
 Este sistema CRUD es una herramienta sencilla que te permite crear, leer, actualizar y eliminar datos en una base de datos SQLite3 utilizando Python y Tkinter. Para utilizarlo, simplemente debes ejecutar el archivo "conexion.pyw" que abrirá la interfaz de usuario.
 
 Antes de empezar a consultar datos, debes hacer clic en la opción "Conectar" en la parte superior de la pantalla para crear una tabla y empezar a rellenarla con los datos que desees. Desde allí, podrás utilizar las funciones de crear, leer, actualizar y eliminar para manipular los datos de la tabla de manera intuitiva y fácil de entender.
