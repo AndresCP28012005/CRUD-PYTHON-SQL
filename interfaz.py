@@ -1,123 +1,64 @@
 from tkinter import *
-from conexion import *
-from codeLabel import *
+from tkinter import messagebox
+from crud_functions import llamarCrud
+from codeLabel import MenuOpciones
 
-# Este elemento nos permite que el Entry de ID solo acepte numeros (declarado en la linea de codigo 74)
 validate_entry = lambda text: text.isdecimal()
-# --------------------------------------------
+
 raiz = Tk()
+raiz.iconbitmap(r'.\logo.ico')
 
-raiz.iconbitmap('.\logo.ico')
+miId, miNombre, miApellido, miPassword, miDireccion, miComentario = [StringVar() for _ in range(6)]
 
-# Estas variables son declaradas de esta manera para poder devolver datos de SQL a los Entrys
-miId=StringVar()
-miNombre = StringVar()
-miApellido=StringVar()
-miPassword=StringVar()
-miDireccion=StringVar()
-miComentario=StringVar()
-# ---------------------
-
-
-
-barraMenu=Menu(raiz)
+barraMenu = Menu(raiz)
 raiz.config(menu=barraMenu)
 
-archivoBbdd=Menu(barraMenu, tearoff=0)
+archivoBbdd = Menu(barraMenu, tearoff=0)
 archivoBbdd.add_command(label='Conectar', command=MenuOpciones.conectar)
-archivoBbdd.add_command(label='Salir', command=MenuOpciones.salirAplicacion)
+archivoBbdd.add_command(label='Salir', command=lambda: MenuOpciones.salirAplicacion(raiz))
 
+archivoBorrar = Menu(barraMenu, tearoff=0)
+archivoBorrar.add_command(label='Limpiar campos', command=lambda: MenuOpciones.clear(widgets_to_clear, cuadroComentario))
 
+archivoCRUD = Menu(barraMenu, tearoff=0)
+for label, command in [('Create', 1), ('Read', 2), ('Update', 3), ('Delete', 4)]:
+    archivoCRUD.add_command(label=label, command=lambda x=command: llamarCrud(x, raiz))
 
-archivoBorrar=Menu(barraMenu, tearoff=0)
-archivoBorrar.add_command(label='Limpiar campos', command=MenuOpciones.clear)
+archivoAyuda = Menu(barraMenu, tearoff=0)
+archivoAyuda.add_command(label='Contacto', command=lambda: MenuOpciones.ayuda(1))
+archivoAyuda.add_command(label='Autor', command=lambda: MenuOpciones.ayuda(2))
 
-archivoCRUD=Menu(barraMenu, tearoff=0)
-archivoCRUD.add_command(label='Create', command=lambda:llamarCrud(1))
-archivoCRUD.add_command(label='Read', command=lambda:llamarCrud(2))
-archivoCRUD.add_command(label='Update', command=lambda:llamarCrud(3))
-archivoCRUD.add_command(label='Delete', command=lambda:llamarCrud(4))
+for label, menu in [('BBDD', archivoBbdd), ('Borrar', archivoBorrar), ('CRUD', archivoCRUD), ('Ayuda', archivoAyuda)]:
+    barraMenu.add_cascade(label=label, menu=menu)
 
-archivoAyuda=Menu(barraMenu, tearoff=0)
-archivoAyuda.add_command(label='Contacto', command=lambda:MenuOpciones.ayuda(1))
-archivoAyuda.add_command(label='Autor', command=lambda:MenuOpciones.ayuda(2))
-
-barraMenu.add_cascade(label='BBDD', menu=archivoBbdd)
-barraMenu.add_cascade(label='Borrar', menu=archivoBorrar)
-barraMenu.add_cascade(label='CRUD', menu=archivoCRUD)
-barraMenu.add_cascade(label='Ayuda', menu=archivoAyuda)
-
-
-
-# ----------------------LABEL------------------
-
-
-miFrame=Frame(raiz, width=600, height=400)
+miFrame = Frame(raiz, width=600, height=400)
 miFrame.pack()
 
-idLabel=Label(miFrame, text='id*:')
-idLabel.grid(row=0, column=0, sticky="e", padx=10, pady=10)
+labels = ['id*:', 'Nombre*:', 'Apellido*:', 'Password*:', 'Direccion*:', 'Comentario:']
+entries = [miId, miNombre, miApellido, miPassword, miDireccion]
 
-nombreLabel=Label(miFrame, text='Nombre*:')
-nombreLabel.grid(row=1, column=0, sticky="e", padx=10, pady=10)
-
-apellidoLabel=Label(miFrame, text='Apellido*:')
-apellidoLabel.grid(row=2, column=0, sticky="e", padx=10, pady=10)
-
-passwordLabel=Label(miFrame, text='Password*:')
-passwordLabel.grid(row=3, column=0, sticky="e", padx=10, pady=10)
-
-direccionLabel=Label(miFrame, text='Direccion*:')
-direccionLabel.grid(row=4, column=0, sticky="e", padx=10, pady=10)
-
-comentarioLabel=Label(miFrame, text='Comentario:')
-comentarioLabel.grid(row=5, column=0, sticky="e", padx=10, pady=10)
-
-# ---------------CUADROS----------------
-
-cuadroId = Entry(miFrame, textvariable=miId, validate="key", validatecommand=(raiz.register(validate_entry),"%S"))
-cuadroId.grid(row=0, column=1, padx=10, pady=10)
-
-cuadroNombre = Entry(miFrame, textvariable=miNombre)
-cuadroNombre.grid(row=1, column=1, padx=10, pady=10)
-
-cuadroApellido = Entry(miFrame, textvariable=miApellido)
-cuadroApellido.grid(row=2, column=1, padx=10, pady=10)
-
-cuadroPassword = Entry(miFrame, textvariable=miPassword)
-cuadroPassword.grid(row=3, column=1, padx=10, pady=10)
-cuadroPassword.config(show='*')
-
-cuadroDireccion = Entry(miFrame, textvariable=miDireccion)
-cuadroDireccion.grid(row=4, column=1, padx=10, pady=10)
+for i, (label_text, entry_var) in enumerate(zip(labels, entries)):
+    Label(miFrame, text=label_text).grid(row=i, column=0, sticky="e", padx=10, pady=10)
+    entry = Entry(miFrame, textvariable=entry_var)
+    entry.grid(row=i, column=1, padx=10, pady=10)
+    if i == 0:
+        entry.config(validate="key", validatecommand=(raiz.register(validate_entry),"%S"))
+    elif i == 3:
+        entry.config(show='*')
 
 cuadroComentario = Text(miFrame, width=16, height=5)
 cuadroComentario.grid(row=5, column=1, padx=10, pady=10)
-scrollVert=Scrollbar(miFrame, command=cuadroComentario.yview)
+scrollVert = Scrollbar(miFrame, command=cuadroComentario.yview)
 scrollVert.grid(row=5, column=2, sticky='nsew')
 cuadroComentario.config(yscrollcommand=scrollVert.set)
 
-# ------------------------BOTONES-------------------------
-
-contenedorBotones=Frame(raiz)
+contenedorBotones = Frame(raiz)
 contenedorBotones.pack()
 
-botonCreate=Button(contenedorBotones, text='Create', command=lambda:llamarCrud(1))
-botonCreate.grid(row=6, column=0, padx=10, pady=10)
+widgets_to_clear = [miId, miNombre, miApellido, miPassword, miDireccion]
 
+for i, (text, command) in enumerate([('Create', 1), ('Read', 2), ('Update', 3), ('Delete', 4)]):
+    Button(contenedorBotones, text=text, command=lambda x=command: llamarCrud(x, raiz)).grid(row=6, column=i, padx=10, pady=10)
 
-botonRead=Button(contenedorBotones, text='Read', command=lambda:llamarCrud(2))
-botonRead.grid(row=6, column=1, padx=10, pady=10)
-
-
-botonUpdate=Button(contenedorBotones, text='Update', command=lambda:llamarCrud(3))
-botonUpdate.grid(row=6, column=2, padx=10, pady=10)
-
-
-botonDelete=Button(contenedorBotones, text='Delete', command=lambda:llamarCrud(4))
-botonDelete.grid(row=6, column=3, padx=10, pady=10)
-
-
-
-
-raiz.mainloop()
+if __name__ == "__main__":
+    raiz.mainloop()
